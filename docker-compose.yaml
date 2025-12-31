@@ -1,0 +1,189 @@
+# ============================================================
+# 로컬 통합 실행용 Docker Compose 설정 파일
+# ============================================================
+# 이 파일은 로컬 개발 환경에서 api, yolo, chat 서비스를
+# 통합 관리하기 위한 docker-compose 설정입니다.
+#
+# 프로젝트 구조:
+# - api.leeyujin.kr: Spring Cloud Gateway + OAuth Service (통합 API 서버)
+#   - Gateway, OAuth 인증, 사용자 관리가 모두 통합됨
+# - yolo.leeyujin.kr: YOLO 서비스 (컴퓨터 비전)
+# - chat.leeyujin.kr: 채팅 서비스
+# - Neon DB: 외부 PostgreSQL 데이터베이스 (클라우드)
+# - Upstash Redis: 외부 Redis 서비스 (클라우드)
+#
+# 사용법:
+# ============================================================
+#
+# 1. 전체 서비스 실행 (기본):
+#    docker compose up
+#    → api-service (8080) + yolo-service + chat-service 실행
+#    → 모든 서비스는 api-service (8080)를 통해 접근 가능
+#    → Redis는 Upstash 클라우드 서비스 사용
+#
+# 2. 백그라운드 실행:
+#    docker compose up -d
+#
+# 3. 종료:
+#    docker compose down
+#
+# 4. 로그 확인:
+#    docker compose logs -f
+#
+# 5. 서비스 상태 확인:
+#    docker compose ps
+#
+#
+# ============================================================
+
+services:
+  # ============================================================
+  # API Service (api.leeyujin.kr)
+  # ============================================================
+  # 역할: 통합 API 서버 (Gateway + OAuth + User Service)
+  # - 모든 서비스의 진입점 역할
+  # - Spring Cloud Gateway 기반 프록시 게이트웨이
+  # - OAuth 인증 서비스 (Google, Kakao, Naver)
+  # - 사용자 관리 서비스
+  # - Redis 클라이언트를 통해 캐싱 및 세션 관리 가능
+  api-service:
+    build:
+      context: ./api.leeyujin.kr
+      dockerfile: Dockerfile
+    container_name: api-service
+    ports:
+      # 포트 매핑: 로컬포트:컨테이너포트
+      # Spring Cloud Gateway는 컨테이너 내부에서 8080 포트로 실행됩니다.
+      - "8080:8080"
+    environment:
+      # Redis 연결 (Upstash 클라우드 Redis 사용)
+      - SPRING_DATA_REDIS_HOST=${UPSTASH_REDIS_HOST}
+      - SPRING_DATA_REDIS_PORT=${UPSTASH_REDIS_PORT:-6379}
+      - SPRING_DATA_REDIS_PASSWORD=${UPSTASH_REDIS_PASSWORD}
+      - SPRING_DATA_REDIS_SSL_ENABLED=${UPSTASH_REDIS_SSL_ENABLED:-true}
+      # OAuth 설정
+      - KAKAO_REST_API_KEY=${KAKAO_REST_API_KEY}
+      - KAKAO_ADMIN_KEY=${KAKAO_ADMIN_KEY}
+      - KAKAO_REDIRECT_URI=${KAKAO_REDIRECT_URI}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - GOOGLE_REDIRECT_URI=${GOOGLE_REDIRECT_URI}
+      - NAVER_CLIENT_ID=${NAVER_CLIENT_ID}
+      - NAVER_CLIENT_SECRET=${NAVER_CLIENT_SECRET}
+      - NAVER_REDIRECT_URI=${NAVER_REDIRECT_URI}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRATION=${JWT_EXPIRATION:-86400000}
+      - FRONTEND_URL=${FRONTEND_URL}
+      - COOKIE_SECURE=${COOKIE_SECURE:-false}
+      - COOKIE_SAME_SITE=${COOKIE_SAME_SITE:-Lax}
+      # Neon DB 설정
+      - DB_HOST=${DB_HOST:-ep-lively-mode-a1br4nbo-pooler.ap-southeast-1.aws.neon.tech}
+      - DB_PORT=${DB_PORT:-5432}
+      - DB_NAME=${DB_NAME:-neondb}
+      - DB_USER=${DB_USER:-neondb_owner}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DATABASE_URL=${DATABASE_URL}
+      - JPA_DDL_AUTO=${JPA_DDL_AUTO:-validate}
+      - JPA_SHOW_SQL=${JPA_SHOW_SQL:-false}
+    # depends_on:
+    #   - yolo-service
+    #   - chat-service
+    # 주의: api-service만 단독 실행하려면 depends_on을 주석 처리하세요
+    networks:
+      - leeyujin-network
+    restart: unless-stopped
+  # ============================================================
+  # YOLO Service (yolo.leeyujin.kr)
+  # ============================================================
+  # 역할: YOLO 컴퓨터 비전 서비스
+  # - 객체 감지 및 이미지 처리
+  yolo-service:
+    build:
+      context: ./yolo.leeyujin.kr
+      dockerfile: Dockerfile
+    container_name: yolo-service
+    ports:
+      - "9000:9000"
+    environment:
+      # Redis 연결 (Upstash 클라우드 Redis 사용)
+      - REDIS_HOST=${UPSTASH_REDIS_HOST}
+      - REDIS_PORT=${UPSTASH_REDIS_PORT:-6379}
+      - REDIS_PASSWORD=${UPSTASH_REDIS_PASSWORD}
+      - REDIS_SSL=${UPSTASH_REDIS_SSL:-true}
+    networks:
+      - leeyujin-network
+    restart: unless-stopped
+
+  # ============================================================
+  # Chat Service (chat.leeyujin.kr)
+  # ============================================================
+  # 역할: 채팅 서비스
+  # - 실시간 채팅 및 메시지 처리
+  chat-service:
+    build:
+      context: ./chat.leeyujin.kr
+      dockerfile: Dockerfile
+    container_name: chat-service
+    ports:
+      - "9001:9001"
+    environment:
+      # Redis 연결 (Upstash 클라우드 Redis 사용)
+      - REDIS_HOST=${UPSTASH_REDIS_HOST}
+      - REDIS_PORT=${UPSTASH_REDIS_PORT:-6379}
+      - REDIS_PASSWORD=${UPSTASH_REDIS_PASSWORD}
+      - REDIS_SSL=${UPSTASH_REDIS_SSL:-true}
+    networks:
+      - leeyujin-network
+    restart: unless-stopped
+  # ============================================================
+  # Networks
+  # ============================================================
+networks:
+  leeyujin-network:
+    driver: bridge
+    name: leeyujin-network
+
+# ============================================================
+# Volumes
+# ============================================================
+# (Upstash 클라우드 Redis 사용으로 로컬 볼륨 불필요)
+
+# ============================================================
+# 환경 변수 예시 (각 서비스 디렉터리의 .env 파일에 설정)
+# ============================================================
+#
+# 루트 .env 파일 예시 (모든 서비스 공통):
+# ----------------------------------------
+# OAuth 설정 (api-service에서 사용)
+# KAKAO_REST_API_KEY=your_kakao_key
+# KAKAO_REDIRECT_URI=http://localhost:3000/auth/kakao/callback
+# GOOGLE_CLIENT_ID=your_google_client_id
+# GOOGLE_CLIENT_SECRET=your_google_client_secret
+# GOOGLE_REDIRECT_URI=http://localhost:3000/auth/google/callback
+# NAVER_CLIENT_ID=your_naver_client_id
+# NAVER_CLIENT_SECRET=your_naver_client_secret
+# NAVER_REDIRECT_URI=http://localhost:3000/auth/naver/callback
+# JWT_SECRET=your_jwt_secret_key_minimum_32_characters_long
+# JWT_EXPIRATION=86400000
+# FRONTEND_URL=http://localhost:3000
+# COOKIE_SECURE=false
+# COOKIE_SAME_SITE=lax
+#
+# Neon DB 설정 (api-service에서 사용)
+# DB_HOST=ep-lively-mode-a1br4nbo-pooler.ap-southeast-1.aws.neon.tech
+# DB_PORT=5432
+# DB_NAME=neondb
+# DB_USER=neondb_owner
+# DB_PASSWORD=your_neon_db_password
+# DATABASE_URL=jdbc:postgresql://ep-lively-mode-a1br4nbo-pooler.ap-southeast-1.aws.neon.tech:5432/neondb?sslmode=require
+# JPA_DDL_AUTO=validate  # validate, update, create, create-drop
+# JPA_SHOW_SQL=false
+#
+# Upstash Redis 설정 (모든 서비스에서 사용)
+# UPSTASH_REDIS_HOST=fit-magpie-6347.upstash.io
+# UPSTASH_REDIS_PORT=6379
+# UPSTASH_REDIS_PASSWORD=ARjLAAImcDE1MDlhNWNiNTgzODg0NzFmODQxOGU3Mjk2NjQ5Y2ZjOXAxNjM0Nw
+# UPSTASH_REDIS_SSL_ENABLED=true
+# UPSTASH_REDIS_SSL=true
+#
+# ============================================================
