@@ -1,3 +1,6 @@
 [submodule "api.leeyujin.kr"]
 	path = api.leeyujin.kr
 	url = git@github.com:feuzw/MVC-api.git
+[submodule "chat.leeyujin.kr"]
+	path = chat.leeyujin.kr
+	url = git@github.com:feuzw/MVC-chat.git
