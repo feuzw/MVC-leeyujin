@@ -4,3 +4,6 @@
 [submodule "chat.leeyujin.kr"]
 	path = chat.leeyujin.kr
 	url = git@github.com:feuzw/MVC-chat.git
+[submodule "vision.leeyujin.kr"]
+	path = vision.leeyujin.kr
+	url = git@github.com:feuzw/MVC-vision.git
