@@ -106,7 +106,7 @@ export default function UploadPage() {
             formData.append("process_type", processType);
 
             // FastAPI로 파일 업로드
-            const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
+            const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
             const response = await fetch(`${apiBaseUrl}/api/upload`, {
                 method: "POST",
                 body: formData,
@@ -178,7 +178,7 @@ export default function UploadPage() {
     const fetchDetectedImages = async () => {
         setIsLoadingDetected(true);
         try {
-            const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
+            const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
             const response = await fetch(`${apiBaseUrl}/api/detected`);
             if (response.ok) {
                 const data = await response.json();
@@ -194,7 +194,7 @@ export default function UploadPage() {
     // 이미지 다운로드
     const handleDownload = async (fileName: string) => {
         try {
-            const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
+            const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
             const url = `${apiBaseUrl}/api/detected/${fileName}`;
             const response = await fetch(url);
             if (response.ok) {
@@ -530,7 +530,7 @@ export default function UploadPage() {
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             {detectedImages.map((detectedImage, index) => {
-                                const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
+                                const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
                                 const imageUrl = `${apiBaseUrl}/api/detected/${detectedImage.fileName}`;
                                 const sizeInMB = (detectedImage.size / 1024 / 1024).toFixed(2);
                                 const createdDate = new Date(detectedImage.createdAt * 1000).toLocaleString('ko-KR');
