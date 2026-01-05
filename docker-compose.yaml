@@ -91,7 +91,7 @@ services:
     # 주의: api-service만 단독 실행하려면 depends_on을 주석 처리하세요
     networks:
       - leeyujin-network
-    restart: unless-stopped
+    restart: on-failure
   # ============================================================
   # YOLO Service (yolo.leeyujin.kr)
   # ============================================================
@@ -112,7 +112,7 @@ services:
       - REDIS_SSL=${UPSTASH_REDIS_SSL:-true}
     networks:
       - leeyujin-network
-    restart: unless-stopped
+    restart: on-failure
 
   # ============================================================
   # Chat Service (chat.leeyujin.kr)

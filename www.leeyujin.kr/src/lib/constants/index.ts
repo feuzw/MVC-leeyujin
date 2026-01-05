@@ -11,7 +11,7 @@ export const API_ENDPOINTS = {
     AUTH: {
         BASE: "/auth",
         GOOGLE: {
-            LOGIN: "/auth/google/login",
+            LOGIN: "/api/auth/google/login",
             CALLBACK: "/auth/google/callback",
         },
         KAKAO: {
@@ -30,6 +30,8 @@ export const API_ENDPOINTS = {
  */
 export const ROUTES = {
     HOME: "/",
+    LOGIN: "/login",
+    DASHBOARD: "/dashboard",
     AUTH: {
         GOOGLE_CALLBACK: "/auth/google/callback",
         KAKAO_CALLBACK: "/auth/kakao/callback",

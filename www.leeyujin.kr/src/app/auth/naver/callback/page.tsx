@@ -29,9 +29,9 @@ export default function NaverCallback() {
             return;
         }
 
-        // 백엔드가 이미 처리했으므로 홈으로 이동
+        // 백엔드가 이미 처리했으므로 대시보드로 이동
         // JWT 쿠키는 이미 설정되어 있음
-        router.push(`/?provider=${provider}`);
+        router.push("/dashboard");
     }, [code, error, provider, router]);
 
     return (
