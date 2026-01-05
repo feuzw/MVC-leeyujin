@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 
 /**
@@ -14,7 +14,7 @@ import { useSearchParams, useRouter } from "next/navigation";
  * 
  * 백엔드가 이 페이지로 리다이렉트했다면, JWT 쿠키는 이미 설정되어 있습니다.
  */
-export default function NaverCallback() {
+function NaverCallbackContent() {
     const searchParams = useSearchParams();
     const router = useRouter();
     const code = searchParams.get("code");
@@ -42,6 +42,21 @@ export default function NaverCallback() {
                 <p className="text-sm text-gray-600 dark:text-gray-400">잠시만 기다려주세요</p>
             </div>
         </div>
+    );
+}
+
+export default function NaverCallback() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="text-center space-y-4">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 dark:border-gray-100 mx-auto"></div>
+                    <p className="text-lg font-medium">로딩 중...</p>
+                </div>
+            </div>
+        }>
+            <NaverCallbackContent />
+        </Suspense>
     );
 }
 
