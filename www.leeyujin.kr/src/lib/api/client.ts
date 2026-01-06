@@ -3,6 +3,7 @@ import axios, {
   type AxiosResponse,
   type AxiosError,
 } from "axios";
+import { useAuthStore } from "@/features/auth/store/authStore";
 
 const BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL ||
@@ -21,13 +22,13 @@ const isClient = () => typeof window !== "undefined";
 // 요청 인터셉터
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    // 향후 토큰 방식(Zustand, Cookies 등) 추가 용
-    // if (isClient()) {
-    //   const token = useAuthStore.getState()?.token;
-    //   if (token) {
-    //     config.headers.Authorization = `Bearer ${token}`;
-    //   }
-    // }
+    // Zustand 스토어에서 Access Token 가져오기
+    if (isClient()) {
+      const accessToken = useAuthStore.getState().getValidToken();
+      if (accessToken) {
+        config.headers.Authorization = `Bearer ${accessToken.token}`;
+      }
+    }
 
     return config;
   },

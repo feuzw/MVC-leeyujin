@@ -1,6 +1,6 @@
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
+    <div className="min-h-screen bg-white flex items-center justify-center">
       <main className="max-w-7xl mx-auto px-4 py-16">
         <div className="text-center">
           <h1 className="text-5xl font-bold text-gray-900 mb-4">
@@ -22,27 +22,6 @@ export default function Home() {
             >
               Upload
             </a>
-          </div>
-        </div>
-
-        <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-xl font-semibold mb-2">Fast & Modern</h3>
-            <p className="text-gray-600">
-              Built with Next.js 14 and TypeScript for optimal performance
-            </p>
-          </div>
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-xl font-semibold mb-2">Scalable Architecture</h3>
-            <p className="text-gray-600">
-              Microservices architecture with Spring Boot and FastAPI
-            </p>
-          </div>
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-xl font-semibold mb-2">AI-Powered</h3>
-            <p className="text-gray-600">
-              Integrated AI services for intelligent features
-            </p>
           </div>
         </div>
       </main>

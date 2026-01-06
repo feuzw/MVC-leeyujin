@@ -6,7 +6,7 @@ import { API_ENDPOINTS } from "@/lib/constants";
  * 하나의 클로저 스코프 안에서 공통 로직을 공유하며,
  * 각 제공자별 핸들러를 이너 함수로 제공합니다.
  */
-export const { handleGoogleLogin, handleKakaoLogin, handleNaverLogin } = (() => {
+export const { handleGoogleLogin, handleKakaoLogin, handleNaverLogin, saveRefreshTokenToCookie } = (() => {
     // 클로저 스코프 - 모든 핸들러가 공유하는 변수
     // 환경 변수에서 API Base URL 가져오기 (기본값: http://localhost:8080)
     const API_BASE_URL =
@@ -143,11 +143,61 @@ export const { handleGoogleLogin, handleKakaoLogin, handleNaverLogin } = (() => 
         await processOAuthLogin("naver");
     };
 
-    // 세 개의 이너 함수를 반환
+    /**
+     * Refresh Token을 httpOnly 쿠키에 저장
+     * 
+     * httpOnly 쿠키는 서버에서만 설정할 수 있으므로,
+     * 백엔드 API를 호출하여 refresh token을 httpOnly 쿠키로 저장합니다.
+     * 
+     * @param refreshToken - Refresh Token 문자열
+     * @returns 성공 여부
+     */
+    const saveRefreshTokenToCookie = async (refreshToken: string): Promise<boolean> => {
+        try {
+            // 백엔드 API 엔드포인트 (예: /api/auth/refresh-token)
+            // 실제 엔드포인트는 백엔드 구현에 맞게 수정 필요
+            const endpoint = `${API_BASE_URL}/api/auth/refresh-token`;
+
+            console.log("[Refresh Token 저장 요청]");
+            console.log("  - API Base URL:", API_BASE_URL);
+            console.log("  - Endpoint:", endpoint);
+
+            const response = await fetch(endpoint, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: "include", // 쿠키 자동 전송/수신
+                body: JSON.stringify({
+                    refreshToken: refreshToken,
+                }),
+            });
+
+            if (response.ok) {
+                console.log("[성공] Refresh Token이 httpOnly 쿠키로 저장되었습니다.");
+                return true;
+            } else {
+                const errorData = await response.json().catch(() => ({}));
+                console.error("[실패] Refresh Token 저장 실패:", errorData);
+                return false;
+            }
+        } catch (error) {
+            console.error("[오류] Refresh Token 저장 중 예외 발생:", error);
+            console.error("  - API Base URL:", API_BASE_URL);
+
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            console.error("  - Error:", errorMessage);
+
+            return false;
+        }
+    };
+
+    // 네 개의 함수를 반환
     return {
         handleGoogleLogin,
         handleKakaoLogin,
         handleNaverLogin,
+        saveRefreshTokenToCookie,
     };
 })(); // 즉시 실행 함수 (람다)
 

@@ -5,25 +5,27 @@ import { handleGoogleLogin, handleKakaoLogin, handleNaverLogin } from "@/feature
 
 export default function LoginPage() {
     return (
-        <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
-            <div className="max-w-md mx-auto py-16 px-4">
+        <div className="min-h-screen bg-white flex items-center justify-center p-4">
+            <div className="max-w-md w-full">
                 <div className="text-center mb-8">
-                    <h1 className="text-4xl font-bold text-gray-900 mb-2">
-                        로그인
+                    <h1 className="text-5xl font-bold text-gray-900 mb-4">
+                        LOGIN
                     </h1>
-                    <p className="text-gray-600">
+                    <p className="text-xl text-gray-600">
                         소셜 계정으로 간편하게 로그인하세요
                     </p>
                 </div>
-                <SocialLoginButtons
-                    onGoogleLogin={handleGoogleLogin}
-                    onKakaoLogin={handleKakaoLogin}
-                    onNaverLogin={handleNaverLogin}
-                />
+                <div className="bg-white rounded-lg border border-gray-300 p-8 shadow-sm">
+                    <SocialLoginButtons
+                        onGoogleLogin={handleGoogleLogin}
+                        onKakaoLogin={handleKakaoLogin}
+                        onNaverLogin={handleNaverLogin}
+                    />
+                </div>
                 <div className="mt-8 text-center">
                     <a
                         href="/"
-                        className="text-sm text-gray-600 hover:text-gray-900 transition"
+                        className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
                     >
                         ← 홈으로 돌아가기
                     </a>

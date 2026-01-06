@@ -9,19 +9,20 @@
  */
 export const API_ENDPOINTS = {
     AUTH: {
-        BASE: "/auth",
+        BASE: "/api/auth",
         GOOGLE: {
             LOGIN: "/api/auth/google/login",
-            CALLBACK: "/auth/google/callback",
+            CALLBACK: "/api/auth/google/callback",
         },
         KAKAO: {
-            LOGIN: "/auth/kakao/login",
-            CALLBACK: "/auth/kakao/callback",
+            LOGIN: "/api/auth/kakao/login",
+            CALLBACK: "/api/auth/kakao/callback",
         },
         NAVER: {
-            LOGIN: "/auth/naver/login",
-            CALLBACK: "/auth/naver/callback",
+            LOGIN: "/api/auth/naver/login",
+            CALLBACK: "/api/auth/naver/callback",
         },
+        REFRESH_TOKEN: "/api/auth/refresh-token",
     },
 } as const;
 
