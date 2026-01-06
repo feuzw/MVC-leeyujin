@@ -35,21 +35,67 @@ apiClient.interceptors.request.use(
   (error: AxiosError) => Promise.reject(error)
 );
 
-// 응답 인터셉터
+// 응답 인터셉터 (401 에러 시 자동 refresh)
 apiClient.interceptors.response.use(
   (response: AxiosResponse) => response,
-  (error: AxiosError) => {
+  async (error: AxiosError) => {
     const status = error.response?.status;
+    const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
 
-    if (status === 401) {
+    // 401 에러이고, 아직 재시도하지 않은 요청인 경우
+    if (status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+
       if (process.env.NODE_ENV === "development") {
-        console.warn("⚠️ 401 Unauthorized - 인증 만료");
+        console.warn("⚠️ 401 Unauthorized - Access Token 만료, Refresh 시도 중...");
       }
 
-      // 향후 실제 로그아웃 로직 추가
-      // if (isClient()) {
-      //   window.location.href = "/login";
-      // }
+      try {
+        // Refresh Token으로 새 Access Token 발급
+        const refreshResponse = await fetch(`${BASE_URL}/api/auth/refresh`, {
+          method: "POST",
+          credentials: "include", // 쿠키 포함 필수
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (refreshResponse.ok) {
+          const data = await refreshResponse.json();
+          const newAccessToken = data.access_token;
+
+          if (newAccessToken) {
+            // 새 Access Token을 Zustand에 저장 (10분 유효)
+            const { setAccessToken } = useAuthStore.getState();
+            setAccessToken(newAccessToken, 10 * 60);
+
+            // 원래 요청을 새 Access Token으로 재시도
+            if (originalRequest.headers) {
+              originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+            }
+
+            return apiClient(originalRequest);
+          }
+        }
+
+        // Refresh 실패 시 로그아웃 처리
+        if (isClient()) {
+          const { clearAccessToken } = useAuthStore.getState();
+          clearAccessToken();
+          window.location.href = "/login";
+        }
+      } catch (refreshError) {
+        // Refresh 요청 자체가 실패한 경우
+        if (process.env.NODE_ENV === "development") {
+          console.error("❌ Refresh Token 요청 실패:", refreshError);
+        }
+
+        if (isClient()) {
+          const { clearAccessToken } = useAuthStore.getState();
+          clearAccessToken();
+          window.location.href = "/login";
+        }
+      }
     }
 
     // 옵셔널 체이닝으로 AxiosError 안전 처리

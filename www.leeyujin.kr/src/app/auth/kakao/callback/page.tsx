@@ -3,7 +3,6 @@
 import { Suspense, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useAuthStore } from "@/features/auth/store/authStore";
-import { saveRefreshTokenToCookie } from "@/features/auth/api/mainService";
 
 /**
  * 카카오 OAuth 콜백 페이지
@@ -20,7 +19,7 @@ function KakaoCallbackContent() {
     const code = searchParams.get("code");
     const error = searchParams.get("error");
     const accessToken = searchParams.get("access_token");
-    const refreshToken = searchParams.get("refresh_token");
+    // refresh_token은 이제 HttpOnly 쿠키로 자동 저장되므로 URL 파라미터에서 받지 않음
     const expiresIn = searchParams.get("expires_in");
     const provider = searchParams.get("provider") || "kakao";
 
@@ -38,27 +37,26 @@ function KakaoCallbackContent() {
 
             // URL 파라미터에서 access_token이 있으면 Zustand 스토어에 저장
             if (accessToken) {
+                // Access Token은 10분 유효 (백엔드에서 설정)
                 const expiresInSeconds = expiresIn
                     ? parseInt(expiresIn, 10)
-                    : 15 * 60; // 기본값: 15분
+                    : 10 * 60; // 기본값: 10분
 
                 setAccessToken(accessToken, expiresInSeconds);
+                console.log("[Kakao Callback] Access Token 저장 완료");
+            } else {
+                console.warn("[Kakao Callback] Access Token이 없습니다.");
             }
 
-            // URL 파라미터에서 refresh_token이 있으면 httpOnly 쿠키에 저장
-            if (refreshToken) {
-                const success = await saveRefreshTokenToCookie(refreshToken);
-                if (!success) {
-                    console.warn("[경고] Refresh Token 저장에 실패했습니다. 로그인은 계속 진행됩니다.");
-                }
-            }
+            // Refresh Token은 백엔드에서 HttpOnly 쿠키로 자동 저장됨
+            // 별도 처리 불필요
 
             // 대시보드로 이동
             router.push("/dashboard");
         };
 
         handleLoginSuccess();
-    }, [code, error, accessToken, refreshToken, expiresIn, provider, router]);
+    }, [code, error, accessToken, expiresIn, provider, router]);
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gradient-dark">
