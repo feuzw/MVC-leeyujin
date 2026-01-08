@@ -1,21 +1,221 @@
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* 
+ * ============================================
+ * 🌙 Dark Mode (Primary Design)
+ * ============================================
+ * 고급 SaaS 느낌의 다크모드 컬러 시스템
+ * pure black/white 사용 금지, 눈에 편한 색상 구성
+ */
+:root,
+:root.dark {
+  /* Background */
+  --background: #0B0D10;
+  /* base background */
+  --background-soft: #0F1115;
+  /* soft background */
+  --surface: #14161B;
+  /* surface / card */
+  --surface-hover: #181B21;
+  /* surface hover */
+
+  /* Text */
+  --text-primary: #EDEFF2;
+  /* primary text (pure white 금지) */
+  --text-secondary: #A6ADBB;
+  /* secondary text */
+  --text-muted: #7C8496;
+  /* muted text */
+
+  /* Border */
+  --border: #232633;
+  /* default border */
+  --border-subtle: #1A1D26;
+  /* subtle border (느껴지는 정도) */
+
+  /* Accent */
+  --accent-primary: #4F7CFF;
+  /* primary accent */
+  --accent-secondary: #7C8DFF;
+  /* secondary accent */
+  --accent-glow: rgba(79, 124, 255, 0.15);
+  /* glow / highlight */
+
+  /* Status */
+  --status-success: #2FBF71;
+  --status-warning: #E6B450;
+  --status-error: #E05D5D;
+}
+
+/* 
+ * ============================================
+ * ☀️ Light Mode (Dark 기반 반전)
+ * ============================================
+ * 다크모드 컬러 시스템을 자연스럽게 반전
+ * 문서 느낌이 아닌 고급 SaaS UI
+ */
+:root.light {
+  /* Background */
+  --background: #F8F9FB;
+  /* base background */
+  --background-soft: #FFFFFF;
+  /* soft background */
+  --surface: #F1F3F7;
+  /* surface / card */
+  --surface-hover: #E9ECF2;
+  /* surface hover */
+
+  /* Text */
+  --text-primary: #1A1D26;
+  /* primary text */
+  --text-secondary: #4A5160;
+  /* secondary text */
+  --text-muted: #7A8190;
+  /* muted text */
+
+  /* Border */
+  --border: #D9DDE6;
+  /* default border */
+  --border-subtle: #E6E9F0;
+  /* subtle border */
+
+  /* Accent */
+  --accent-primary: #4F7CFF;
+  /* primary accent (다크와 동일) */
+  --accent-secondary: #7C8DFF;
+  /* secondary accent */
+  --accent-glow: rgba(79, 124, 255, 0.12);
+  /* soft accent */
+
+  /* Status */
+  --status-success: #2FBF71;
+  --status-warning: #E6B450;
+  --status-error: #E05D5D;
+}
+
+html {
+  font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background-color: var(--background) !important;
+  color: var(--text-primary) !important;
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  color: var(--text-primary) !important;
+  background: var(--background) !important;
+  font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-feature-settings: "kern" 1;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* System preference detection */
+@media (prefers-color-scheme: light) {
+  :root:not(.dark):not(.light) {
+    /* Light mode 기본값 (사용자가 명시적으로 테마를 선택하지 않은 경우) */
+    --background: #F8F9FB;
+    --background-soft: #FFFFFF;
+    --surface: #F1F3F7;
+    --surface-hover: #E9ECF2;
+    --text-primary: #1A1D26;
+    --text-secondary: #4A5160;
+    --text-muted: #7A8190;
+    --border: #D9DDE6;
+    --border-subtle: #E6E9F0;
+    --accent-primary: #4F7CFF;
+    --accent-secondary: #7C8DFF;
+    --accent-glow: rgba(79, 124, 255, 0.12);
+    --status-success: #2FBF71;
+    --status-warning: #E6B450;
+    --status-error: #E05D5D;
+  }
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
-}
 
+  /* 
+   * ============================================
+   * Gradient 유틸리티 (Hero, CTA, 강조 카드에만 사용)
+   * ============================================
+   */
+  .gradient-accent-dark {
+    background: linear-gradient(135deg, rgba(79, 124, 255, 0.20), rgba(124, 141, 255, 0.08));
+  }
+
+  .gradient-accent-light {
+    background: linear-gradient(135deg, rgba(79, 124, 255, 0.15), rgba(124, 141, 255, 0.05));
+  }
+
+  /* 
+   * ============================================
+   * 색상 유틸리티 클래스
+   * ============================================
+   */
+  .bg-background {
+    background-color: var(--background) !important;
+  }
+
+  .bg-background-soft {
+    background-color: var(--background-soft) !important;
+  }
+
+  .bg-surface {
+    background-color: var(--surface) !important;
+  }
+
+  .bg-surface-hover {
+    background-color: var(--surface-hover) !important;
+  }
+
+  .text-text-primary {
+    color: var(--text-primary) !important;
+  }
+
+  .text-text-secondary {
+    color: var(--text-secondary) !important;
+  }
+
+  .text-text-muted {
+    color: var(--text-muted) !important;
+  }
+
+  .border-border {
+    border-color: var(--border) !important;
+  }
+
+  .border-border-subtle {
+    border-color: var(--border-subtle) !important;
+  }
+
+  .bg-accent {
+    background-color: var(--accent-primary) !important;
+  }
+
+  .bg-accent-secondary {
+    background-color: var(--accent-secondary) !important;
+  }
+
+  .bg-accent-glow {
+    background-color: var(--accent-glow) !important;
+  }
+
+  .text-status-success {
+    color: var(--status-success) !important;
+  }
+
+  .text-status-warning {
+    color: var(--status-warning) !important;
+  }
+
+  .text-status-error {
+    color: var(--status-error) !important;
+  }
+}

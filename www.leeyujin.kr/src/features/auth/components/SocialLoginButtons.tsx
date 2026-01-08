@@ -12,10 +12,10 @@ export default function SocialLoginButtons({
     onNaverLogin,
 }: SocialLoginButtonsProps) {
     return (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-3">
             <button
                 onClick={onGoogleLogin}
-                className="w-full rounded-lg border border-gray-300 bg-white transition-all flex items-center justify-center gap-3 hover:bg-gray-50 text-sm sm:text-base h-12 px-4 text-gray-700 font-medium"
+                className="group w-full rounded-lg border border-border-subtle bg-surface backdrop-blur-sm transition-all duration-300 flex items-center justify-center gap-3 hover:border-accent-primary/40 hover:text-text-primary hover:bg-surface-hover text-sm h-12 px-4 text-text-secondary font-light"
             >
                 <svg width="20" height="20" viewBox="0 0 24 24">
                     <path
@@ -35,25 +35,25 @@ export default function SocialLoginButtons({
                         d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                     />
                 </svg>
-                구글로 로그인
+                <span className="tracking-wide">구글로 로그인</span>
             </button>
             <button
                 onClick={onKakaoLogin}
-                className="w-full rounded-lg border border-transparent transition-all flex items-center justify-center gap-3 hover:opacity-90 text-sm sm:text-base h-12 px-4 bg-[#FEE500] text-[#000000] font-medium"
+                className="w-full rounded-lg border border-transparent transition-all duration-300 flex items-center justify-center gap-3 hover:opacity-90 text-sm h-12 px-4 bg-[#FEE500] text-[#000000] font-light"
             >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M12 3c5.799 0 10.5 3.664 10.5 8.185 0 2.498-1.657 4.733-4.27 6.201l-.907 2.77c-.05.15-.2.24-.35.24h-1.68c-.15 0-.3-.09-.35-.24l-.907-2.77C7.157 15.918 5.5 13.683 5.5 11.185 5.5 6.664 10.201 3 12 3z" />
                 </svg>
-                카카오로 로그인
+                <span className="tracking-wide">카카오로 로그인</span>
             </button>
             <button
                 onClick={onNaverLogin}
-                className="w-full rounded-lg border border-transparent transition-all flex items-center justify-center gap-3 hover:opacity-90 text-sm sm:text-base h-12 px-4 bg-[#03C75A] text-white font-medium"
+                className="w-full rounded-lg border border-transparent transition-all duration-300 flex items-center justify-center gap-3 hover:opacity-90 text-sm h-12 px-4 bg-[#03C75A] text-white font-light"
             >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M16.273 12.845L7.376 0H0v24h7.726V11.156L16.624 24H24V0h-7.727v12.845z" />
                 </svg>
-                네이버로 로그인
+                <span className="tracking-wide">네이버로 로그인</span>
             </button>
         </div>
     );

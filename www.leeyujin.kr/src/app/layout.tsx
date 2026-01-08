@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "@/styles/globals.css";
+import ThemeProvider from "@/components/ThemeProvider";
 
 export const metadata: Metadata = {
   title: "Portfolio Project",
@@ -12,8 +13,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko">
-      <body className="antialiased bg-white text-gray-900">{children}</body>
+    <html lang="ko" suppressHydrationWarning>
+      <body className="antialiased bg-background text-text-primary font-sans">
+        <ThemeProvider>{children}</ThemeProvider>
+      </body>
     </html>
   );
 }

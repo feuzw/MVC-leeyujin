@@ -59,11 +59,11 @@ function KakaoCallbackContent() {
     }, [code, error, accessToken, expiresIn, provider, router]);
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-dark">
+        <div className="min-h-screen flex items-center justify-center bg-background">
             <div className="text-center space-y-4">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-400 mx-auto"></div>
-                <p className="text-lg font-medium text-gray-200">카카오 로그인 처리 중...</p>
-                <p className="text-sm text-gray-400">잠시만 기다려주세요</p>
+                <div className="animate-spin rounded-full h-12 w-12 border-2 border-border-subtle border-t-accent-primary mx-auto"></div>
+                <p className="text-lg font-light text-text-primary">카카오 로그인 처리 중...</p>
+                <p className="text-sm font-light text-text-secondary">잠시만 기다려주세요</p>
             </div>
         </div>
     );
@@ -72,10 +72,10 @@ function KakaoCallbackContent() {
 export default function KakaoCallback() {
     return (
         <Suspense fallback={
-            <div className="min-h-screen flex items-center justify-center bg-gradient-dark">
+            <div className="min-h-screen flex items-center justify-center bg-background">
                 <div className="text-center space-y-4">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-400 mx-auto"></div>
-                    <p className="text-lg font-medium text-gray-200">로딩 중...</p>
+                    <div className="animate-spin rounded-full h-12 w-12 border-2 border-border-subtle border-t-accent-primary mx-auto"></div>
+                    <p className="text-lg font-light text-text-primary">로딩 중...</p>
                 </div>
             </div>
         }>
