@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "@/styles/globals.css";
 import ThemeProvider from "@/components/ThemeProvider";
+import { AuthStoreProvider } from "@/features/auth/providers";
 
 export const metadata: Metadata = {
   title: "Portfolio Project",
@@ -15,7 +16,9 @@ export default function RootLayout({
   return (
     <html lang="ko" suppressHydrationWarning>
       <body className="antialiased bg-background text-text-primary font-sans">
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          <AuthStoreProvider>{children}</AuthStoreProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
